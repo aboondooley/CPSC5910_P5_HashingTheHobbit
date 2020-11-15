@@ -11,7 +11,7 @@
 class WordCounter {
 public:
     // BIG 4
-    WordCounter(int capacity);
+    explicit WordCounter(int capacity);
     ~WordCounter();
     WordCounter(const WordCounter &other);
     WordCounter &operator=(const WordCounter &rhs);
@@ -24,21 +24,28 @@ public:
     int getTotalWordCount() const;
     bool empty() const;
 
-private:
     struct Node {
-        std::string word;
         int count;
+        std::string word;
         Node *next, *last; // doubly-linked node!
+
+        // Convenience constructor
+        Node(int c, std::string w, Node *n, Node *l) {
+            count = c;
+            word = w;
+            next = n;
+            last = l;
+        }
     };
 
     struct LinkedList {
         Node *head = nullptr;
 
-        void add(Node *toAdd) { // add to the front
-            toAdd->next = head;
-            head->last = toAdd;
-            head = toAdd;
-            toAdd->last = nullptr;
+        void add(std::string word) { // add to the front
+            *head = Node(1, word, head, nullptr);
+            if (head->next != nullptr) {
+                head->next->last = head;
+            }
         }
 
         void remove(Node *toRemove) {
@@ -54,7 +61,13 @@ private:
         }
     };
 
-    static int hasher(std::string word);
+private:
+
+
+
+
+    static int hash(std::string word);
+    int getBucket(std::string word) const;
 
     int capacity;
     int uniqueWordCount;

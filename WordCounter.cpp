@@ -3,6 +3,9 @@
 //
 
 #include "WordCounter.h"
+#include <math.h>
+#include <iostream> // TODO remove
+using namespace std;
 
 WordCounter::WordCounter(int capacity) {
     map = new LinkedList[capacity];
@@ -39,6 +42,36 @@ WordCounter &WordCounter::operator=(const WordCounter &rhs) {
     }
     return *this;
 }
+
+int WordCounter::hash(std::string word) {
+    std::hash<string> h;
+    return h(word);
+}
+
+int WordCounter::getBucket(std::string word) const {
+    return abs(hash(word)) % capacity;
+}
+
+int WordCounter::addWord(const std::string word) {
+    int bucket = getBucket(word);
+    totalWordCount++;
+    for (Node *cur = map[bucket].head; cur != nullptr; cur = cur->next) {
+        if (cur->word == word) {
+            return ++cur->count;
+        }
+    }
+    LinkedList l;
+    l.add(word);
+    map[bucket].head = l.head;
+    uniqueWordCount++;
+    //cout << map[bucket].head->word << endl; // TODO remove
+    //cout << map[bucket].head->count << endl; // TODO remove
+    return map[bucket].head->count; // always 1
+}
+
+
+
+
 
 
 
