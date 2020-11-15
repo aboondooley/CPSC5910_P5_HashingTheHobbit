@@ -2,62 +2,136 @@
 // Created by Alie on 11/14/2020.
 //
 
-#ifndef P5_HASHINGTHEHOBBIT_LINKEDLIST_H
-#define P5_HASHINGTHEHOBBIT_LINKEDLIST_H
+#ifndef LAB5_LISTTEMPLATE_LINKEDLIST_H
+#define LAB5_LISTTEMPLATE_LINKEDLIST_H
+
 #include <string>
+#include <iostream>
 
-
-template <typename T>
+// Dictionary of int: string functionality in a linked list implementation.
 class LinkedList {
-
-
 private:
-    struct Node {
-        std::string word;
-        int count;
-        Node *next;
-    };
-
-    int s = 0; // size
-
-
+    struct ListElem;  // forward declare this struct
 
 public:
-    LinkedList();
-    ~LinkedList();
-    LinkedList(const LinkedList<T> &other) {
-
-    }
-    LinkedList<T> &operator=(const LinkedList<T> &rhs) {
-
+    LinkedList() {
+        head = nullptr;
     }
 
-    Node *head;
-
-    void addNode(Node *toAdd) {
-
+    ~LinkedList() {
+        clear();
     }
 
-    Node *deleteNode(Node *toDelete) {
-
+    LinkedList(const LinkedList &other) {
+        head = copy(other.head);
     }
 
-    static Node *nextNode(Node *current) {
-        return current->next;
+    LinkedList &operator=(const LinkedList &rhs) {
+        if (&rhs != this) {
+            clear();
+            head = copy(rhs.head);
+        }
+        return *this;
     }
 
-    static std::string getWord(Node *toGet) {
-        return toGet->word;
+    void add(int key, std::string payload) {  // lightning fast!!
+        if (payload == "")
+            throw std::invalid_argument("Cannot have a payload of empty string "
+                                        "(means "
+                                        "not found when returned from search)");
+        head = new ListElem(key, payload, head);
     }
 
-    static int getCount(Node *toGet) {
-        return toGet->count;
+    void remove(std::string p) {// not so fast -- linear search
+        if (head == nullptr)
+            return;
+
+        // special case if found at head of list
+        if (head->payload == p) {
+            ListElem *toDelete = head;
+            head = head->next;
+            delete toDelete;
+            return;
+        }
+
+        // normal case is to find later down the list
+        ListElem *prior = head;
+        for (ListElem *cur = head->next; cur != nullptr; cur = cur->next) {
+            if (cur->payload == p) {
+                prior->next = cur->next;
+                delete cur;
+                return;
+            }
+            prior = prior->next;
+        }
     }
 
-    int size() {
-        return size;
+    int getKey(std::string p){
+        for (ListElem *cur = head; cur != nullptr; cur = cur->next) {
+            if (cur->payload == p)
+                return cur->key;
+        }
+        return -1; // -1 means not found
     }
-}
+
+    int incrementKey(std::string p) {
+        for (ListElem *cur = head; cur != nullptr; cur = cur->next) {
+            if (cur->payload == p)
+                return ++cur->key;
+        }
+        return -1; // -1 means not found
+    }
+
+    std::string search(std::string p) const { // not so fast -- linear search
+        for (ListElem *cur = head; cur != nullptr; cur = cur->next) {
+            if (cur->payload == p)
+                return cur->payload;
+        }
+        return ""; // Empty string means not found
+    }
+
+    bool empty() const {
+        if (head == nullptr) {
+            return true;
+        }
+        return false;
+    }
+
+private:
+    struct ListElem {
+        int key;
+        std::string payload;
+        ListElem *next;
+
+        // convenience ctor
+        ListElem(int k, std::string p, ListElem *n) {
+            key = k;
+            payload = p;
+            next = n;
+        }
+    };
+
+    ListElem *head;
+
+    void clear() {
+        while (head != nullptr) {
+            ListElem *toDelete = head;
+            head = head->next;
+            delete toDelete;
+        }
+    }
+
+    static ListElem *copy(ListElem *headToCopy) {
+        ListElem anchor(0, "", nullptr), *source, *tail;
+        tail = &anchor;
+        for (source = headToCopy; source != nullptr; source = source->next) {
+            tail->next = new ListElem(source->key, source->payload, nullptr);
+            tail = tail->next;
+        }
+        return anchor.next;
+    }
+
+};
 
 
-#endif //P5_HASHINGTHEHOBBIT_LINKEDLIST_H
+#endif //LAB5_LISTTEMPLATE_LINKEDLIST_H
