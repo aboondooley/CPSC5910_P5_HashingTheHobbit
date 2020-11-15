@@ -5,6 +5,7 @@
 #ifndef P5_HASHINGTHEHOBBIT_WORDCOUNTER_H
 #define P5_HASHINGTHEHOBBIT_WORDCOUNTER_H
 
+#include "LinkedList.h"
 #include <string>
 
 
@@ -24,6 +25,7 @@ public:
     int getTotalWordCount() const;
     bool empty() const;
 
+    /*
     struct Node {
         int count;
         std::string word;
@@ -59,19 +61,16 @@ public:
         static Node *next(Node *current) {
             return current->next;
         }
-    };
+    }; */
 
 private:
-
-
-
-
     static int hash(std::string word);
     int getBucket(std::string word) const;
 
     int capacity;
     int uniqueWordCount;
     int totalWordCount;
+    int spacesUsed;
     LinkedList *map;
 
 
