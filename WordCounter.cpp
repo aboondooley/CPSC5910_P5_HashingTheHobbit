@@ -3,8 +3,6 @@
 //
 
 #include "WordCounter.h"
-#include "LinkedList.h"
-#include <math.h>
 #include <iostream> // TODO remove
 using namespace std;
 
@@ -55,7 +53,7 @@ int WordCounter::getBucket(std::string word) const {
     return abs(hash(word)) % capacity;
 }
 
-int WordCounter::addWord(const std::string word) {
+int WordCounter::addWord(std::string word) {
     int bucket = getBucket(word);
     totalWordCount++;
     if (map[bucket].empty() || map[bucket].search(word) == "") {
@@ -64,23 +62,41 @@ int WordCounter::addWord(const std::string word) {
         uniqueWordCount++;
         return map[bucket].getKey(word); // always 1
     }
-
-    return map[bucket].incrementKey(word);
-    /*
-    for (Node *cur = map[bucket].head; cur != nullptr; cur = cur->next) {
-        if (cur->word == word) {
-            return ++cur->count;
-        }
-    }
-    LinkedList l;
-    l.add(word);
-    map[bucket].head = l.head;
-    uniqueWordCount++;
-    //cout << map[bucket].head->word << endl; // TODO remove
-    //cout << map[bucket].head->count << endl; // TODO remove
-     return map[bucket].head->count; // always 1
-     */
+    return map[bucket].setKey(word, map[bucket].getKey(word) + 1);
 }
+
+void WordCounter::removeWord(std::string word) {
+    int bucket = getBucket(word);
+    if (!map[bucket].empty() && map[bucket].search(word) == word) {
+        totalWordCount = totalWordCount - map[bucket].getKey(word);
+        uniqueWordCount--;
+        map[bucket].remove(word);
+        if (map[bucket].empty()) {spacesUsed--;}
+    }
+}
+
+int WordCounter::getUniqueWordCount() const {
+    return uniqueWordCount;
+}
+
+int WordCounter::getTotalWordCount() const {
+    return totalWordCount;
+}
+
+bool WordCounter::empty() const {
+    return totalWordCount == 0;
+}
+
+double WordCounter::getLoadFactor() const {
+    return 1.0 * spacesUsed / capacity; // multiply by double to return a double
+}
+
+int WordCounter::getWordCount(std::string word) const {
+    int bucket = getBucket(word);
+    return map[bucket].getKey(word);
+}
+
+
 
 
 

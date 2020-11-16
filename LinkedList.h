@@ -42,7 +42,7 @@ public:
         head = new ListElem(key, payload, head);
     }
 
-    void remove(std::string p) {// not so fast -- linear search
+    void remove(std::string p) { // not so fast -- linear search
         if (head == nullptr)
             return;
 
@@ -68,16 +68,19 @@ public:
 
     int getKey(std::string p){
         for (ListElem *cur = head; cur != nullptr; cur = cur->next) {
-            if (cur->payload == p)
+            if (cur->payload == p) {
                 return cur->key;
+            }
         }
-        return -1; // -1 means not found
+        return 0; // -1 means not found
     }
 
-    int incrementKey(std::string p) {
+    int setKey(std::string p, int v) {
         for (ListElem *cur = head; cur != nullptr; cur = cur->next) {
-            if (cur->payload == p)
-                return ++cur->key;
+            if (cur->payload == p) {
+                cur->key = v;
+                return cur->key;
+            }
         }
         return -1; // -1 means not found
     }
