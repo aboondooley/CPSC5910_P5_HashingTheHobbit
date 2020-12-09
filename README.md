@@ -1,0 +1,2 @@
+# CPSC5910_P5_HashingTheHobbit
+Fifth project for CPSC 5091: Data Structures for the Computer Science Fundamentals Certificate at Seattle University. In this project we implemented a HashTable using the separate chaining method of dealing with collisions. The program reads in a file with text from a book, (or any text,) and  counts the words using the HashTable. The client can interact with the user interface to learn statistics about the words in the file.
